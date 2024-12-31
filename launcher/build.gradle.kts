@@ -7,16 +7,6 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
-
-    repositories {
-        maven {
-            url = uri("https://maven.pkg.github.com/LodiaNET-Development/smash-api")
-            credentials {
-                username = System.getenv("GITHUB_ACTOR")
-                password = System.getenv("GITHUB_TOKEN")
-            }
-        }
-    }
 }
 
 dependencies {
