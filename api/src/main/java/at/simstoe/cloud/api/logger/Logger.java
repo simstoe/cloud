@@ -1,5 +1,7 @@
 package at.simstoe.cloud.api.logger;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * @author Simon Stögerer
  * copyright - all rights reserved
@@ -7,6 +9,13 @@ package at.simstoe.cloud.api.logger;
  */
 
 public interface Logger {
-    void log(final String text);
-    void log(final String text, final LogType logType);
+    void log(final @NotNull String text, final @NotNull LogType logType);
+    void log(final @NotNull String[] text, final @NotNull LogType logType);
+    void log(final @NotNull String... text);
+
+    //TODO: format method
+
+    default void log(final @NotNull String text) {
+        this.log(text, LogType.INFO);
+    }
 }

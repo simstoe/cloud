@@ -14,10 +14,10 @@ import lombok.experimental.Accessors;
 @Getter
 @Accessors(fluent = true)
 public enum LogType {
-    SUCCESS("§aSUCCESS§7"),
-    INFO("§bINFO§7"),
-    ERROR("§cERROR§7"),
-    WARNING("§6WARNING§7"),
+    SUCCESS("§aSUCCESS§r"),
+    INFO("§bINFO§r"),
+    ERROR("§cERROR§r"),
+    WARNING("§6WARNING§r"),
     EMPTY("");
 
     private final String textField;

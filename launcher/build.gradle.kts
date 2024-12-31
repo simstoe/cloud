@@ -25,6 +25,7 @@ java {
 
 dependencies {
     implementation(project(":api"))
+    implementation("org.jline:jline:3.21.0")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

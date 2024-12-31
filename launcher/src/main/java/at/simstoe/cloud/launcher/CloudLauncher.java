@@ -40,7 +40,7 @@ public final class CloudLauncher {
         instance = this;
 
         this.commandManager = new CommandManagerImpl();
-        this.logger = new SimpleLogger("logs");
+        this.logger = new SimpleLogger();
         this.configurationManager = new ConfigurationManager(new FileConfigurationSource("config.properties"));
         this.workerThread = new WorkerThread(this);
 

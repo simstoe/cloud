@@ -13,8 +13,9 @@ subprojects {
     apply(plugin = "java")
 
     dependencies {
-        compileOnly("org.projectlombok:lombok:1.18.30")
-        annotationProcessor("org.projectlombok:lombok:1.18.30")
+        compileOnly("org.projectlombok:lombok:1.18.36")
+        annotationProcessor("org.projectlombok:lombok:1.18.36")
+        implementation("org.jetbrains:annotations:26.0.1")
     }
 }
 

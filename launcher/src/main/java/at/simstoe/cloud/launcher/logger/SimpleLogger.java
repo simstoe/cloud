@@ -3,11 +3,15 @@ package at.simstoe.cloud.launcher.logger;
 import at.simstoe.cloud.api.logger.LogType;
 import at.simstoe.cloud.api.logger.Logger;
 import at.simstoe.cloud.api.logger.console.AnsiColor;
+import at.simstoe.cloud.launcher.console.SimpleConsoleManager;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.experimental.Accessors;
+import org.jetbrains.annotations.NotNull;
+import org.jline.utils.InfoCmp;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -17,53 +21,53 @@ import java.util.Date;
  * created: 23.12.2024 - 13:16
  */
 
+@Getter
+@Accessors(fluent = true)
 public final class SimpleLogger implements Logger {
-    private final File logFile;
+    private SimpleConsoleManager consoleManager;
 
-    public SimpleLogger(String logDirectory) {
-        var directory = new File(logDirectory);
-
-        if (!directory.exists()) directory.mkdirs();
-
-        logFile = new File(directory, "application.log");
-
+    public SimpleLogger() {
         try {
-            if (!logFile.exists() && !logFile.createNewFile()) {
-                throw new IOException("Log-Datei konnte nicht erstellt werden: " + logFile.getAbsolutePath());
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Fehler beim Erstellen der Log-Datei", e);
-        }
-    }
-
-    @Override
-    public void log(String text) {
-        System.out.println(text);
-    }
-
-    @Override
-    public void log(String text, LogType logType) {
-        var timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-
-        var logTemplate = "§8[§r" + timestamp + "§8] " + mapLogTypeToColor(logType).ansiCode() + logType + "§r - " + text;
-
-        System.out.println(AnsiColor.replaceColorCodes(logTemplate));
-
-        try (var writer = new BufferedWriter(new FileWriter(logFile, true))) {
-            //TODO: remove § and colorcode
-            writer.write(logTemplate);
+            this.consoleManager = new SimpleConsoleManager(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.setOut(new PrintStream(new LoggerOutputStream(this, LogType.INFO), true));
+        System.setErr(new PrintStream(new LoggerOutputStream(this, LogType.ERROR), true));
     }
 
-    private AnsiColor mapLogTypeToColor(LogType logType) {
-        return switch (logType) {
-            case INFO -> AnsiColor.CYAN;
-            case SUCCESS -> AnsiColor.GREEN;
-            case WARNING -> AnsiColor.YELLOW;
-            case ERROR -> AnsiColor.RED;
-            default -> AnsiColor.RESET;
-        };
+
+    @Override
+    public void log(@NotNull String text, @NotNull LogType logType) {
+        final var terminal = this.consoleManager.terminal();
+        final var replacedText = AnsiColor.replaceColorCodes(logType.textField() + " " + text);
+
+        terminal.puts(InfoCmp.Capability.carriage_return);
+        terminal.writer().println(replacedText);
+        terminal.flush();
+        this.consoleManager.redraw();
+    }
+
+    @Override
+    public void log(final @NotNull String[] text, final @NotNull LogType logType) {
+        final var terminal = this.consoleManager.terminal();
+
+        terminal.puts(InfoCmp.Capability.carriage_return);
+
+        for (final var s : text) {
+            terminal.writer().println(s);
+        }
+        terminal.flush();
+        this.consoleManager.redraw();
+    }
+
+    @Override
+    public void log(final @NotNull String... text) {
+        this.log(text, LogType.INFO);
+    }
+
+    public boolean isWindows() {
+        return System.getProperty("os.name").toLowerCase().contains("windows");
     }
 }

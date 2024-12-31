@@ -45,7 +45,7 @@ public enum AnsiColor {
 
                 if (color != null) {
                     result.append(color.ansiCode());
-                    i++; // Überspringt das nächste Zeichen, da es der Farbcode ist
+                    i++;
                 } else {
                     result.append(currentChar);
                 }
