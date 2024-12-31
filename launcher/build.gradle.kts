@@ -19,10 +19,6 @@ repositories {
     }
 }
 
-java {
-    modularity.inferModulePath = true
-}
-
 dependencies {
     implementation(project(":api"))
     implementation("org.jline:jline:3.21.0")
@@ -32,7 +28,6 @@ dependencies {
 }
 
 application {
-    mainModule = "at.simstoe.cloud.launcher"
     mainClass = "at.simstoe.cloud.launcher.CloudLauncher"
 }
 
